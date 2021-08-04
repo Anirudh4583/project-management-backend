@@ -25,7 +25,8 @@ router.post('/login', (req, res) => {
       if (err) {
         console.error(err);
       } else {
-        res.send(result.rows[0].role);
+        res.send({ role: result.rows[0].role });
+        // console.log(result.rows[0].role);
       }
     }
   );
