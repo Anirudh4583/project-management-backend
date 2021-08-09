@@ -2,9 +2,6 @@ const express = require("express");
 
 const app = express();
 
-// const PORT = process.env.PORT || 3000;
-
-
 const cors = require('cors');
 const corsOptions ={
     origin:'http://localhost:3000', 
@@ -14,11 +11,9 @@ const corsOptions ={
 app.use(cors(corsOptions));
 
 var UserController = require("./routers/login");
+var NewAnnouncement = require("./routers/announcement");
+app.use('/api/auth', UserController);
+app.use('/api/Announcement', NewAnnouncement);
 
-app.use('/auth', UserController);
-
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
 
 module.exports = app;

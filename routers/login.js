@@ -7,7 +7,7 @@ router.use(bodyParser.json());
 const { pool } = require("../config/dbConfig");
 
 router.get("/",(req,res)=>{
-    pool.query(`SELECT * FROM users`,
+    pool.query(`select * from announcements`,
     (err, results) => {
         if (err) {
           console.log(err);
