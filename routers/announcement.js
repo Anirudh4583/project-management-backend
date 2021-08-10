@@ -117,7 +117,7 @@ router.post("/add",(req,res)=>{
                                         else
                                         {
                                             console.log("Column added successfully")
-                                            if(value.fieldName){
+                                            if(value.fieldData){
                                                 pool.query(`UPDATE ${data.formName}
                                                 SET ${value.fieldName} = $1
                                                 WHERE announcement_id = $2;`,[value.fieldData,ID],(err,result)=>{
@@ -143,7 +143,7 @@ router.post("/add",(req,res)=>{
                                         else
                                         {
                                             console.log("Column added successfully")
-                                            if(value.fieldName){
+                                            if(value.fieldData){
                                                 pool.query(`UPDATE ${data.formName}
                                                 SET ${value.fieldName} = $1
                                                 WHERE announcement_id = $2;`,[value.fieldData,ID],(err,result)=>{
