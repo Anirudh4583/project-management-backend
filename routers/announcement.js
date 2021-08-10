@@ -42,7 +42,7 @@ router.post("/add",(req,res)=>{
         ],
         numberOfFields:2,
         deadline:"2021-08-12",
-        formName:"IDEA",
+        formName:"IDEAs",
         formData:"This is the data"
     }
 
