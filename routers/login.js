@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
     }
     console.log(results.rows);
   });
+});
 
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
