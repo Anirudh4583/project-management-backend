@@ -42,7 +42,8 @@ router.post("/add",(req,res)=>{
         ],
         numberOfFields:2,
         deadline:"2021-08-12",
-        formName:"projectidea"
+        formName:"projectidea",
+        formData:"This is the data"
     }
 
     // const {data} = req.body;
@@ -83,6 +84,7 @@ router.post("/add",(req,res)=>{
                 pool.query(`CREATE TABLE ${data.formName} (
                     announcement_id integer references announcements(id),
                     AnnouncementName VARCHAR NOT NULL,
+                    AnnouncementData VARCHAR NOT NULL,
                     deadline VARCHAR NOT NULL)`,(err,results)=>{
                     if(err)
                       {
@@ -91,7 +93,7 @@ router.post("/add",(req,res)=>{
                     else
                     {
                         console.log("table created successfully");
-                        pool.query(`INSERT INTO ${data.formName} (announcement_id,AnnouncementName,deadline) VALUES ($1,$2,$3)`,[ID,data.formName,data.deadline],(err,results)=>{
+                        pool.query(`INSERT INTO ${data.formName} (announcement_id,AnnouncementName,AnnouncementData,deadline) VALUES ($1,$2,$3,$4)`,[ID,data.formName,data.formData,data.deadline],(err,results)=>{
                             if(err)
                             {
                                 console.log(err);
