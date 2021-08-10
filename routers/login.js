@@ -6,6 +6,7 @@ router.use(bodyParser.json());
 
 const { pool } = require('../config/dbConfig');
 
+
 router.get('/', (req, res) => {
   pool.query(`SELECT * FROM users`, (err, results) => {
     if (err) {
@@ -13,7 +14,6 @@ router.get('/', (req, res) => {
     }
     console.log(results.rows);
   });
-});
 
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
