@@ -42,7 +42,7 @@ router.post("/add",(req,res)=>{
         ],
         numberOfFields:2,
         deadline:"2021-08-12",
-        formName:"projectidea",
+        formName:"IDEA",
         formData:"This is the data"
     }
 
@@ -161,6 +161,7 @@ router.post("/add",(req,res)=>{
                                 }
                             })
                         }
+                    res.send({message:"Announcement added successfully"})
                     }
                 })
              }
