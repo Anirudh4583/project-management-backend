@@ -9,17 +9,14 @@ const { pool } = require("../config/dbConfig");
 
 
 router.get("/",(req,res)=>{
-    pool.query(`SELECT * from announce`,(err,result)=>{
+    pool.query(`SELECT * from announcements`,(err,result)=>{
         if(err){
             res.send(err);
         }
         else 
         {
             if(result.rows){
-                result.rows[0].fields.map((value)=>{
-                    console.log(JSON.parse(value));
-                })
-                
+               res.send(result.rows)
             }
             
         }
