@@ -9,27 +9,16 @@ const { pool } = require("../config/dbConfig");
 
 
 router.get("/",(req,res)=>{
-<<<<<<< HEAD
-    pool.query(`CREATE TABLE announcements (
-        id SERIAL PRIMARY KEY,
-        announcement_name VARCHAR NOT NULL,
-        announcement_data VARCHAR NOT NULL,
-        deadline VARCHAR NOT NULL)`,(err,result)=>{
-=======
-    pool.query(`SELECT * from announcements`,(err,result)=>{
->>>>>>> c23fb2ed8abaeb5ed9772cfc12575219747b40b5
+    pool.query(`select * from announcements`,(err,result)=>{
         if(err){
             res.send(err);
         }
         else 
         {
-<<<<<<< HEAD
-         res.send({m:"add"});   
-=======
             if(result.rows){
-               res.send(result.rows)
+                res.send(res.result.rows);  
             }
->>>>>>> c23fb2ed8abaeb5ed9772cfc12575219747b40b5
+          
             
         }
         
