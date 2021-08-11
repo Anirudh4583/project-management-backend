@@ -9,18 +9,17 @@ const { pool } = require("../config/dbConfig");
 
 
 router.get("/",(req,res)=>{
-    pool.query(`SELECT * from announce`,(err,result)=>{
+    pool.query(`CREATE TABLE announcements (
+        id SERIAL PRIMARY KEY,
+        announcement_name VARCHAR NOT NULL,
+        announcement_data VARCHAR NOT NULL,
+        deadline VARCHAR NOT NULL)`,(err,result)=>{
         if(err){
             res.send(err);
         }
         else 
         {
-            if(result.rows){
-                result.rows[0].fields.map((value)=>{
-                    console.log(JSON.parse(value));
-                })
-                
-            }
+         res.send({m:"add"});   
             
         }
         
@@ -62,31 +61,19 @@ router.post("/add",(req,res)=>{
         }
         else
         {
-         pool.query(`INSERT INTO announcements (announcement_name) VALUES($1)`,[data.formName],(err,result)=>{
+         pool.query(`INSERT INTO announcements (announcement_name,announcement_data,deadline) VALUES($1,$2,$3)`,[data.formName,data.formData,data.deadline],(err,result)=>{
             if(err){
                  console.log(err)
              }
             else
              {
                 console.log("announcement added successfully")
-                
-                
-                pool.query(`SELECT * from announcements WHERE announcement_name= $1`,[data.formName],(err,result)=>{
-                    if(err){
-                      console.log(err)
-                    }
-                    else
-                    {
-                         ID = result.rows[0].id
-                         
-                    }
-                })
+            
 
                 pool.query(`CREATE TABLE ${data.formName} (
                     announcement_id integer references announcements(id),
-                    AnnouncementName VARCHAR NOT NULL,
-                    AnnouncementData VARCHAR NOT NULL,
-                    deadline VARCHAR NOT NULL)`,(err,results)=>{
+                    faculty_id SERIAL PRIMARY KEY
+                    )`,(err,results)=>{
                     if(err)
                       {
                         console.log(err)
@@ -94,22 +81,13 @@ router.post("/add",(req,res)=>{
                     else
                     {
                         console.log("table created successfully");
-                        pool.query(`INSERT INTO ${data.formName} (announcement_id,AnnouncementName,AnnouncementData,deadline) VALUES ($1,$2,$3,$4)`,[ID,data.formName,data.formData,data.deadline],(err,results)=>{
-                            if(err)
-                            {
-                                console.log(err);
-                            }
-                            else
-                            {
-                                console.log("Entries added into table successfully")
-                            }
-                        })
-                        
                         if(data.numberOfFields)
                         {
+                            data.fields.map((value)=>{
+                                if(value.fieldType){
                                     pool.query(`
                                     ALTER TABLE ${data.formName} 
-                                    ADD COLUMN fields VARCHAR[];
+                                    ADD COLUMN ${value.fieldName} VARCHAR[];
                                     `,(err,result)=>{
                                         if(err){
                                             console.log(err);
@@ -117,19 +95,27 @@ router.post("/add",(req,res)=>{
                                         else
                                         {
                                             console.log("Column added successfully")
-                                            
-                                                pool.query(`UPDATE ${data.formName}
-                                                SET fields = $1
-                                                WHERE announcement_id = $2;`,[data.fields,ID],(err,result)=>{
-                                                    if(err)
-                                                    {
-                                                        console.log(err)
-                                                    }
-                                                                
-                                                })
-                                            
                                         }
                                     })
+                                }
+                                else
+                                {
+                                    pool.query(`
+                                    ALTER TABLE ${data.formName} 
+                                    ADD COLUMN ${value.fieldName} VARCHAR;
+                                    `,(err,result)=>{
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                        else
+                                        {
+                                            console.log("Column added successfully")
+                                        }
+                                    })
+                                }
+                               
+                            })
+                                    
                         }
                     res.send({message:"Announcement added successfully"})
                     }
