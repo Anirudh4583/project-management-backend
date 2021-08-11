@@ -10,13 +10,13 @@ const { pool } = require("../config/dbConfig");
 
 router.get("/",(req,res)=>{
     pool.query(`SELECT * from announcements`,(err,result)=>{
-        if(errr){
+        if(err){
             res.send(err);
         }
         else 
         {
             if(result.rows){
-                res.send(results.rows);
+               res.send(result.rows)
             }
             
         }
@@ -31,18 +31,16 @@ router.post("/add",(req,res)=>{
         fields:[
             {
                 fieldName:"hello",
-                fieldData:"HELLO I AM HUMAN",
                 fieldType:false
             },
             {
                 fieldName:"Ideas",
-                fieldData:["whats up!","Hi"],
                 fieldType:true
             }
         ],
         numberOfFields:2,
         deadline:"2021-08-12",
-        formName:"projectidea",
+        formName:"Project",
         formData:"This is the data"
     }
 
@@ -57,7 +55,7 @@ router.post("/add",(req,res)=>{
     {
         if(result.rows.length>0)
         {
-       res.send({message:'Announcement already exists!'});
+       res.send({error:'Announcement already exists!'});
         }
         else
         {
@@ -106,12 +104,9 @@ router.post("/add",(req,res)=>{
                         
                         if(data.numberOfFields)
                         {
-                            data.fields.map((value)=>{
-                                if(value.fieldType)
-                                {
                                     pool.query(`
                                     ALTER TABLE ${data.formName} 
-                                    ADD COLUMN ${value.fieldName} VARCHAR[];
+                                    ADD COLUMN fields VARCHAR[];
                                     `,(err,result)=>{
                                         if(err){
                                             console.log(err);
@@ -119,48 +114,21 @@ router.post("/add",(req,res)=>{
                                         else
                                         {
                                             console.log("Column added successfully")
-                                            if(value.fieldName){
+                                            
                                                 pool.query(`UPDATE ${data.formName}
-                                                SET ${value.fieldName} = $1
-                                                WHERE announcement_id = $2;`,[value.fieldData,ID],(err,result)=>{
+                                                SET fields = $1
+                                                WHERE announcement_id = $2;`,[data.fields,ID],(err,result)=>{
                                                     if(err)
                                                     {
                                                         console.log(err)
                                                     }
                                                                 
                                                 })
-                                            }
+                                            
                                         }
                                     })
-                                }
-                                else
-                                {
-                                    pool.query(`
-                                    ALTER TABLE ${data.formName} 
-                                    ADD COLUMN ${value.fieldName} VARCHAR;
-                                    `,(err,result)=>{
-                                        if(err){
-                                            console.log(err)
-                                        }
-                                        else
-                                        {
-                                            console.log("Column added successfully")
-                                            if(value.fieldName){
-                                                pool.query(`UPDATE ${data.formName}
-                                                SET ${value.fieldName} = $1
-                                                WHERE announcement_id = $2;`,[value.fieldData,ID],(err,result)=>{
-                                                    if(err)
-                                                    {
-                                                        console.log(err)
-                                                    }
-                                                                
-                                                })
-                                            }
-                                        }
-                                    })
-                                }
-                            })
                         }
+                    res.send({message:"Announcement added successfully"})
                     }
                 })
              }

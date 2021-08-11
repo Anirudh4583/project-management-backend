@@ -14,7 +14,7 @@ app.use(cors(corsOptions));
 var UserController = require("./routers/login");
 var NewAnnouncement = require("./routers/announcement");
 app.use('/api/auth', UserController);
-app.use('/api/Announcement', NewAnnouncement);
+app.use('/api/announcement', NewAnnouncement);
 
 
 
