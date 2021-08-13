@@ -12,10 +12,12 @@ app.use(cors(corsOptions));
 
 
 var UserController = require("./routers/login");
-var NewAnnouncement = require("./routers/announcement");
-app.use('/api/auth', UserController);
-app.use('/api/announcement', NewAnnouncement);
+var Announcement = require("./routers/announcement");
+var Mail = require("./routers/mail");
 
+app.use('/api/auth', UserController);
+app.use('/api/form', Announcement);
+app.use('/api/mail/',Mail);
 
 
 module.exports = app;

@@ -16,13 +16,14 @@ router.get("/",(req,res)=>{
         else 
         {
             if(result.rows){
-                res.send(res.result.rows);  
+               res.send(result);  
             }
           
             
         }
         
     })
+   
 });
 
 router.post("/add",(req,res)=>{
@@ -41,90 +42,67 @@ router.post("/add",(req,res)=>{
         ],
         numberOfFields:2,
         deadline:"2021-08-12",
-        formName:"Project",
+        formName:"Project12",
         formData:"This is the data"
     }
 
     // const {data} = req.body;
     let ID;
 
-    pool.query(`SELECT * from announcements WHERE announcement_name= $1`,[data.formName],(err,result)=>{
-    if(err){
-      console.log(err)
-    }
-    else
-    {
-        if(result.rows.length>0)
-        {
-       res.send({error:'Announcement already exists!'});
-        }
-        else
-        {
-         pool.query(`INSERT INTO announcements (announcement_name,announcement_data,deadline) VALUES($1,$2,$3)`,[data.formName,data.formData,data.deadline],(err,result)=>{
-            if(err){
-                 console.log(err)
-             }
-            else
-             {
-                console.log("announcement added successfully")
+    ;(async () => {
+        const client = await pool.connect()
+        
+        try {
+            await client.query('BEGIN')
+            const result = await client.query(`SELECT * from form WHERE form_name= $1`,[data.formName])
             
-
-                pool.query(`CREATE TABLE ${data.formName} (
-                    announcement_id integer references announcements(id),
-                    faculty_id SERIAL PRIMARY KEY
-                    )`,(err,results)=>{
-                    if(err)
+                    if(result.rows.length>0)
                       {
-                        console.log(err)
+                     res.send({error:'Form with same name already exists!'});
                       }
-                    else
+                      else
+                      {
+                    await client.query(`INSERT INTO form (form_name,form_data,form_deadline) VALUES($1,$2,$3)`,[data.formName,data.formData,data.deadline])
+                  
+                          
+              
+                    await client.query(`CREATE TABLE ${data.formName} (
+                                  faculty_id integer
+                                  )`)
+                                     
+                    if(data.numberOfFields)
                     {
-                        console.log("table created successfully");
-                        if(data.numberOfFields)
-                        {
                             data.fields.map((value)=>{
                                 if(value.fieldType){
-                                    pool.query(`
-                                    ALTER TABLE ${data.formName} 
-                                    ADD COLUMN ${value.fieldName} VARCHAR[];
-                                    `,(err,result)=>{
-                                        if(err){
-                                            console.log(err);
-                                        }
-                                        else
-                                        {
-                                            console.log("Column added successfully")
-                                        }
-                                    })
-                                }
-                                else
-                                {
-                                    pool.query(`
-                                    ALTER TABLE ${data.formName} 
-                                    ADD COLUMN ${value.fieldName} VARCHAR;
-                                    `,(err,result)=>{
-                                        if(err){
-                                            console.log(err);
-                                        }
-                                        else
-                                        {
-                                            console.log("Column added successfully")
-                                        }
-                                    })
-                                }
-                               
-                            })
-                                    
-                        }
-                    res.send({message:"Announcement added successfully"})
+                                    client.query(`
+                                                  ALTER TABLE ${data.formName} 
+                                                  ADD COLUMN ${value.fieldName} VARCHAR[];
+                                                  `)
+                                                   }
+                                              else
+                                              {
+                                                  client.query(`
+                                                  ALTER TABLE ${data.formName} 
+                                                  ADD COLUMN ${value.fieldName} VARCHAR;
+                                                  `)
+                                              }
+                                             
+                                        })
+                                                  
                     }
-                })
-             }
-         })
+                                 
+                    }
+                              
+                    await client.query('COMMIT')
+                    res.send({message:"form added successfully"})
+                  } catch (e) {
+          await client.query('ROLLBACK')
+          throw e
         }
-    }
+      })().catch(e => console.error(e.stack))
+     
     
-  })
+ 
 })
 
 
