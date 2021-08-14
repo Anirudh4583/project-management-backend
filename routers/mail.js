@@ -17,10 +17,12 @@ router.post('/announcement', (req, res) => {
     
     // const {data}=req.body;
     const data={
-        target:[{name:'students',batch:[2019,2020]}]
+        mailSubject:"This is subject",
+        mailBody:"This is body",
+        mailTarget:[{name:'students',batch:[2019,2020]}]
     }
     
-        data.target.map((value)=>{
+        data.mailTarget.map((value)=>{
             
                 if(value.batch){
                     value.batch.map((x)=>{
@@ -35,8 +37,8 @@ router.post('/announcement', (req, res) => {
                              const mailOptions = {
                                 from: 'billgoldberg253@gmail.com', // sender address
                                 to: maillist, // list of receivers
-                                subject: 'hi', // Subject line
-                                html: '<p>mail vala hogaya</p>'// plain text body
+                                subject: data.mailSubject, // Subject line
+                                html: `<p>${data.mailBody}</p>`// plain text body
                                };
                             transporter.sendMail(mailOptions, function (err, info) {
                                 if(err)
