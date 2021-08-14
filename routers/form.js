@@ -62,7 +62,7 @@ router.post("/add",(req,res)=>{
                       }
                       else
                       {
-                    await client.query(`INSERT INTO form (form_name,form_data,form_deadline) VALUES($1,$2,$3)`,[data.formName,data.formData,data.deadline])
+                    await client.query(`INSERT INTO form (form_name,form_data,form_deadline,form_fields) VALUES($1,$2,$3,$4)`,[data.formName,data.formData,data.deadline,data.fields])
                   
                           
               
