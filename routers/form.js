@@ -22,9 +22,8 @@ router.post('/add', (req, res) => {
   console.log('aaya')
   //dummy data
   const data = {
-    name: 'ann',
-    data: 'data',
-    formid: 1,
+    annName: 'ann',
+    annData: 'data',
     target: 1,
     fields: [
       {
@@ -51,15 +50,25 @@ router.post('/add', (req, res) => {
 
     try {
       await client.query('BEGIN')
-      //INSERT INTO public.announcements (
-      // announcement_name, announcement_data, form_id, target) VALUES (
-      //     'NAMW'::character varying, 'ASDASD'::character varying, '2'::integer, '2'::integer)
-      //      returning announcement_id;
-      await client.query(
-        'INSERT INTO announcements(announcement_name, announcement_data, form_id, target)  VALUES($1,$2,$3,$4)',
-        [data.name, data.data, data.formid, target],
+      
+      const result = await client.query(
+        `SELECT * from announcements where announcement_name=$1`,
+        [data.annName]
+      )
+
+      if(result.rows.length > 0){
+        res.send({err:"Announcement with same name already exists"})
+      }
+      else
+      {
+      const resAnnId = await client.query(
+        'INSERT INTO announcements(announcement_name, announcement_data, target)  VALUES($1,$2,$3) RETURNING announcement_id',
+        [data.annName, data.annData, target],
       )
       console.log('announcement done')
+
+      // console.log("ye ann id")
+      // console.log(resAnnId)
 
       if (data.formName.length > 0) {
         const result = await client.query(
@@ -70,10 +79,20 @@ router.post('/add', (req, res) => {
         if (result.rows.length > 0) {
           res.send({ error: 'Form with same name already exists!' })
         } else {
-          await client.query(
-            `INSERT INTO form (form_name,form_data,form_deadline) VALUES($1,$2,$3)`,
-            [data.formName, data.formData, data.deadline],
+          const resFormId = await client.query(
+            `INSERT INTO form (form_name,form_data,form_deadline,form_fields) VALUES($1,$2,$3,$4) RETURNING form_id`,
+            [data.formName, data.formData, data.deadline, data.fields],
           )
+            // console.log("ye form id")
+            // console.log(resFormId)
+
+            await client.query(
+              `UPDATE announcements
+              SET form_id = $1 
+              WHERE announcement_id = $2;
+              `,
+              [resFormId.rows[0].form_id,resAnnId.rows[0].announcement_id]
+            )
 
           await client.query(`CREATE TABLE ${data.formName} (
                               faculty_id integer
@@ -98,12 +117,16 @@ router.post('/add', (req, res) => {
       }
 
       await client.query('COMMIT')
-      res.send({ message: 'form added successfully' })
+      res.send({ message: 'Announcement added successfully' })
+    }
     } catch (e) {
       await client.query('ROLLBACK')
       throw e
     }
-  })().catch((e) => console.error(e.stack))
+  })().catch((e) => {
+    console.error(e.stack)
+    res.send(e.stack)
+  })
 })
 
 module.exports = router

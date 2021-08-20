@@ -15,7 +15,7 @@ var Form = require('./routers/form')
 var Mail = require('./routers/mail')
 
 app.use('/api/auth', UserController)
-app.use('/api/form', Form)
+app.use('/api/announcement', Form)
 app.use('/api/mail/', Mail)
 
 module.exports = app
