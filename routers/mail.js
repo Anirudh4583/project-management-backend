@@ -42,16 +42,16 @@ router.post('/announcement', (req, res) => {
 
   // FOR FACULTY
 
-  // const mailOptions = {
-  //   from: 'billgoldberg253@gmail.com', // sender address
-  //   to:`faculty@iiitvadodara.ac.in`, // list of receivers
-  //   subject: data.mailSubject, // Subject line
-  //   html: `<p>${data.mailBody}</p>`, // plain text body
-  // }
-  // transporter.sendMail(mailOptions, function (err, info) {
-  //   if (err) console.log(err)
-  //   else console.log(info)
-  // })
+  const mailOptions = {
+    from: 'billgoldberg253@gmail.com', // sender address
+    to:`${process.env.MAIL_TO}`, // list of receivers
+    subject: data.mailSubject, // Subject line
+    html: `<p>${data.mailBody}</p>`, // plain text body
+  }
+  transporter.sendMail(mailOptions, function (err, info) {
+    if (err) console.log(err)
+    else console.log(info)
+  })
 
 })
 

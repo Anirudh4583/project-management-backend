@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
       res.send(err)
     } else {
       if (result.rows) {
-        res.send(result)
+        res.send(result.rows)
       }
     }
   })
@@ -21,27 +21,27 @@ router.get('/', (req, res) => {
 router.post('/add', (req, res) => {
   console.log('aaya')
   //dummy data
-  const data = {
-    annName: 'ann',
-    annData: 'data',
-    target: 1,
-    fields: [
-      {
-        fieldName: 'hello',
-        fieldType: false,
-      },
-      {
-        fieldName: 'Ideas',
-        fieldType: true,
-      },
-    ],
-    numberOfFields: 2,
-    deadline: '2021-08-12',
-    formName: 'Projectfinal',
-    formData: 'This is the data',
-  }
+  // const data = {
+  //   annName: 'ann',
+  //   annData: 'data',
+  //   target: 1,
+  //   fields: [
+  //     {
+  //       fieldName: 'hello',
+  //       fieldType: false,
+  //     },
+  //     {
+  //       fieldName: 'Ideas',
+  //       fieldType: true,
+  //     },
+  //   ],
+  //   numberOfFields: 2,
+  //   deadline: '2021-08-12',
+  //   formName: 'Projectfinal',
+  //   formData: 'This is the data',
+  // }
 
-  // const {data} = req.body;
+  const {data} = req.body
   let ID
   const target = [data.target]
 
@@ -70,7 +70,7 @@ router.post('/add', (req, res) => {
       // console.log("ye ann id")
       // console.log(resAnnId)
 
-      if (data.formName.length > 0) {
+      if (data.formName?.length > 0) {
         const result = await client.query(
           `SELECT * from form WHERE form_name= $1`,
           [data.formName],
