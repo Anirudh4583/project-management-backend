@@ -4,9 +4,9 @@ var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
+var {transporter} = require("../helpers/utils/nodemailer")
 
-
-router.post('/announcement', (req, res) => {
+router.post('/', (req, res) => {
   // const {data}=req.body;
   
   
@@ -19,7 +19,7 @@ router.post('/announcement', (req, res) => {
     mailTarget: [{ batch: [2019, 2020] }],
   }
 
-  data.mailTarget.map((value) => {
+  // data.mailTarget.map((value) => {
     
     // FOR STUDENTS
 
@@ -38,13 +38,13 @@ router.post('/announcement', (req, res) => {
     //     })
     //   })
     // } 
-  })
+  // })
 
   // FOR FACULTY
 
   const mailOptions = {
     from: 'billgoldberg253@gmail.com', // sender address
-    to:`${process.env.MAIL_TO}`, // list of receivers
+    to:`anirudhmitra210@outlook.com`, // list of receivers
     subject: data.mailSubject, // Subject line
     html: `<p>${data.mailBody}</p>`, // plain text body
   }
