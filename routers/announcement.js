@@ -6,16 +6,33 @@ router.use(bodyParser.json())
 
 const { pool } = require('../config/dbConfig')
 
-router.get('/', (req, res) => {
-  pool.query(`select * from announcements`, (err, result) => {
-    if (err) {
-      res.send(err)
-    } else {
-      if (result.rows) {
-        res.send(result.rows)
+router.post('/', (req, res) => {
+  var role = req.body.role;
+  if(role === 0){
+    pool.query(`select * from announcements`, (err, result) => {
+    
+      if (err) {
+        res.send(err)
+      } else {
+        if (result.rows) {
+          res.send(result.rows)
+        }
       }
-    }
-  })
+    })  
+  }
+  else{
+    pool.query(`select * from announcements where target=$1`,[role], (err, result) => {
+    
+      if (err) {
+        res.send(err)
+      } else {
+        if (result.rows) {
+          res.send(result.rows)
+        }
+      }
+    })
+  }
+  
 })
 
 router.post('/add', (req, res) => {
