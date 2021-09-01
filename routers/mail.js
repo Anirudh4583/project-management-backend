@@ -43,7 +43,7 @@ router.post('/', (req, res) => {
   // FOR FACULTY
 
   const mailOptions = {
-    from: 'billgoldberg253@gmail.com', // sender address
+    from: 'aman', // sender address
     to:`anirudhmitra210@outlook.com`, // list of receivers
     subject: data.mailSubject, // Subject line
     html: `<p>${data.mailBody}</p>`, // plain text body

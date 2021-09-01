@@ -4,7 +4,7 @@ var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
-const { pool } = require('../config/dbConfig')
+const { pool } = require('../config/db.Config')
 
 router.get('/', (req, res) => {
   pool.query(`select * from announcements`, (err, result) => {
@@ -42,7 +42,7 @@ router.post('/add', (req, res) => {
   // }
 
   const {data} = req.body
-  let ID
+  
   const target = [data.target]
 
   ;(async () => {
@@ -128,5 +128,7 @@ router.post('/add', (req, res) => {
     res.send(e.stack)
   })
 })
+
+
 
 module.exports = router

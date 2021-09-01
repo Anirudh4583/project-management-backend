@@ -4,7 +4,7 @@ var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
-const { pool } = require('../config/dbConfig')
+const { pool } = require('../config/db.Config')
 
 router.post("/",(req,res)=>{
     const {formId} = req.body;
