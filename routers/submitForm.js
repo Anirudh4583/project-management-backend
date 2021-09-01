@@ -6,7 +6,7 @@ router.use(bodyParser.json())
 const {auth} = require("../middleware");
 
 const { pool } = require('../config/db.Config')
-const { response } = require('express')
+
 
 router.post("/0",[auth.verifyToken, auth.isAdmin], (req,res)=>{
     let ID = auth.getID(req)
@@ -24,11 +24,22 @@ router.post("/1",[auth.verifyToken, auth.isModerator], (req,res)=>{
     let ID = auth.getID(req)
     console.log(ID)
     let formId = 19
-
+    const data = [
+        {formName: "hello", formData: "hi whats up"},
+        {formName: "Ideas", formData: ["Ideas here"]}
+        ]
     ;(async () => {
         const { rows } = await pool.query(`Select * from form where form_id=$1`,[formId])
-        console.log(rows.length>0){
-            await pool.query(`Update ${rows.form_name}`)
+        if(rows.length>0){
+            // await pool.query(`INSERT INTO ${rows[0].form_name} (faculty_id) VALUES($1)`,[ID])
+            // // console.log(rows[0])
+            
+            data.map((field)=>{
+            pool.query(`Update ${rows[0].form_name} set ${field.formName}=$1 WHERE faculty_id=$2`,[field.formData, ID])
+            // console.log(data.field_name.fieldName)
+            })
+                
+            
         }
         
       })().catch(err =>

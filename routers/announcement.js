@@ -8,7 +8,7 @@ const { pool } = require('../config/db.Config')
 
 router.post('/', (req, res) => {
   var role = req.body.role;
-  if(role === 0){
+  if(role == 0){
     pool.query(`select * from announcements`, (err, result) => {
     
       if (err) {
@@ -16,6 +16,7 @@ router.post('/', (req, res) => {
       } else {
         if (result.rows) {
           res.send(result.rows)
+          
         }
       }
     })  
