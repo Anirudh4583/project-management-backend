@@ -7,14 +7,17 @@ router.use(bodyParser.json())
 const { pool } = require('../config/db.Config')
 
 router.post('/', (req, res) => {
+
   var role = req.body.role;
   if(role == 0){
     pool.query(`select * from announcements`, (err, result) => {
-    
       if (err) {
+        console.log(err);
         res.send(err)
       } else {
+        console.log(result);
         if (result.rows) {
+          console.log(result.rows);
           res.send(result.rows)
           
         }
@@ -22,9 +25,11 @@ router.post('/', (req, res) => {
     })  
   }
   else{
-    pool.query(`select * from announcements where target=$1`,[role], (err, result) => {
+    //console.log("aaya");
+    pool.query(`SELECT * from announcements WHERE $1=ANY(target)`,[role], (err, result) => {
     
       if (err) {
+        console.log(err);
         res.send(err)
       } else {
         if (result.rows) {
