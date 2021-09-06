@@ -10,14 +10,16 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-var UserController = require('./routers/login')
+var Login = require('./routers/login')
 var Announcement = require('./routers/announcement')
-var Form = require('./routers/form')
+var Viewform = require('./routers/viewForm')
 var Mail = require('./routers/mail')
+var Submitform = require('./routers/submitForm')
 
-app.use('/api/auth', UserController)
+app.use('/', Login)
 app.use('/api/announcement', Announcement)
-app.use('/api/form', Form)
+app.use('/api/viewForm', Viewform)
 app.use('/api/mail/', Mail)
+app.use("/api/submitForm", Submitform)
 
 module.exports = app

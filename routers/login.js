@@ -3,8 +3,8 @@ var router = express.Router()
 var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
+const controller = require("../controllers/auth.controller");
 
-const { pool } = require('../config/dbConfig')
 
 router.get('/', (req, res) => {
   pool.query(`SELECT * FROM users`, (err, results) => {
@@ -15,24 +15,7 @@ router.get('/', (req, res) => {
   })
 })
 
-router.post('/login', (req, res) => {
-  const { email, password } = req.body
-
-  pool.query(
-    `SELECT role from users WHERE email= $1`,
-    [email],
-    (err, result) => {
-      if (err) {
-        console.error(err)
-      } else {
-        // console.log(result)
-        console.log(email)
-        res.send({ role: result.rows[0].role })
-        // console.log(result.rows[0].role);
-      }
-    },
-  )
-})
+router.post('/login', controller.signin);
 
 module.exports = router
 
