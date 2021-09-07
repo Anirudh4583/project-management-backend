@@ -44,27 +44,27 @@ router.post('/', (req, res) => {
 router.post('/add', (req, res) => {
   console.log('aaya')
   //dummy data
-  // const data = {
-  //   annName: 'ann',
-  //   annData: 'data',
-  //   target: 1,
-  //   fields: [
-  //     {
-  //       fieldName: 'hello',
-  //       fieldType: false,
-  //     },
-  //     {
-  //       fieldName: 'Ideas',
-  //       fieldType: true,
-  //     },
-  //   ],
-  //   numberOfFields: 2,
-  //   deadline: '2021-08-12',
-  //   formName: 'Projectfinal',
-  //   formData: 'This is the data',
-  // }
+  const data = {
+    annName: 'dev',
+    annData: 'data',
+    target: 1,
+    fields: [
+      {
+        fieldName: 'hello',
+        fieldType: false,
+      },
+      {
+        fieldName: 'Ideas',
+        fieldType: true,
+      },
+    ],
+    numberOfFields: 2,
+    deadline: '2021-08-12',
+    formName: 'ProjectfinalTest',
+    formData: 'This is the data',
+  }
 
-  const {data} = req.body
+  // const {data} = req.body
   
   const target = [data.target]
 
