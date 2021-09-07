@@ -5,7 +5,7 @@ var transporter = nodemailer.createTransport({
   auth: {
     user: process.env.AUTH_USER,
     pass: process.env.AUTH_PASS,
-  }
+  },
 })
 
 module.exports = { transporter }
