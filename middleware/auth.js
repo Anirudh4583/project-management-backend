@@ -3,7 +3,9 @@ const config = require("../config/auth.config.js");
 const {pool} = require("../config/db.config");
 
 verifyToken = (req,res,next) => {
-    let token = req.headers["x-access-token"];
+    let token = req.headers["accesstoken"];
+    console.log(req.headers)
+    console.log(token)
 
     if(!token) {
         return res.status(403).send({

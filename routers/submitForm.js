@@ -18,24 +18,28 @@ router.post("/0",[auth.verifyToken, auth.isAdmin], (req,res)=>{
 // kal aana kal
 // kal id ko use krk form ko update kra denge
 
-router.post("/1",[auth.verifyToken, auth.isModerator], (req,res)=>{
+router.post("/1",[auth.verifyToken, auth.isModeratorOrAdmin], (req,res)=>{
 
 // res.send("hello faculty")
     let ID = auth.getID(req)
     console.log(ID)
     let formId = 19
-    const data = [
-        {formName: "hello", formData: "hi whats up"},
-        {formName: "Ideas", formData: ["Ideas here"]}
-        ]
+    // const data = [
+    //     {fieldName: "hello", fieldData: "hi whats up"},
+    //     {fieldName: "Ideas", fieldData: ["Ideas here"]}
+    //     ]
+
+        const data = req.body.fields
+        console.log(data)
+
     ;(async () => {
         const { rows } = await pool.query(`Select * from form where form_id=$1`,[formId])
         if(rows.length>0){
-            // await pool.query(`INSERT INTO ${rows[0].form_name} (faculty_id) VALUES($1)`,[ID])
-            // // console.log(rows[0])
+            await pool.query(`INSERT INTO ${rows[0].form_name} (faculty_id) VALUES($1)`,[ID])
+            console.log("rows", rows[0])
             
             data.map((field)=>{
-            pool.query(`Update ${rows[0].form_name} set ${field.formName}=$1 WHERE faculty_id=$2`,[field.formData, ID])
+            pool.query(`Update ${rows[0].form_name} set ${field.fieldName}=$1 WHERE faculty_id=$2`,[field.fieldData, ID])
             // console.log(data.field_name.fieldName)
             })
                 
