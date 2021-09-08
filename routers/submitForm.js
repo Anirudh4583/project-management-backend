@@ -20,10 +20,11 @@ router.post('/1', [auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
   // res.send("hello faculty")
   let ID = auth.getID(req)
   console.log(ID)
-  // let formId = 59
-  // const data = [
-  //     {fieldName: "single", fieldData: "hi whats up"}
-  //     ]
+  let formId = 59
+  const data = [
+      {fieldName: "single", fieldData: 
+      ["hi whats up"]}
+      ]
 
   // const formId = req.body.formId
   // const data = req.body.data.fields
@@ -48,8 +49,13 @@ router.post('/1', [auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
           `Update ${rows[0].form_name} set ${field.fieldName}=$1 WHERE faculty_id=$2`,
           [field.fieldData, ID],
         )
+
+    
+
         // console.log(data.field_name.fieldName)
       })
+      await client.query('COMMIT')
+      res.send({success:"Form submitted successfully"})
     }
   } catch (e) {
     await client.query('ROLLBACK')
@@ -57,7 +63,7 @@ router.post('/1', [auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
   }
   })().catch((e) =>{
   console.error(e.stack)
-  res.send(e.stack)
+  res.send({error:"There was some error in submitting form, please try again"})
   })
 })
 
