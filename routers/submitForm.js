@@ -8,72 +8,59 @@ const { auth } = require('../middleware')
 const { pool } = require('../config/db.Config')
 
 router.post('/0', [auth.verifyToken, auth.isAdmin], (req, res) => {
-  let ID = auth.getID(req)
+  // let ID = auth.getID(req)
 
-  res.send('HI' + ID)
+  // res.send('HI' + ID)
   // console.log(req)
 })
 
-// kal aana kal
-// kal id ko use krk form ko update kra denge
+
 
 router.post('/1', [auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
   // res.send("hello faculty")
   let ID = auth.getID(req)
   console.log(ID)
-  // let formId = 19
+  // let formId = 59
   // const data = [
-  //     {fieldName: "hello", fieldData: "hi whats up"},
-  //     {fieldName: "Ideas", fieldData: ["Ideas here"]}
+  //     {fieldName: "single", fieldData: "hi whats up"}
   //     ]
 
-  const formId = req.body.formId
-  const data = req.body.data.fields
+  // const formId = req.body.formId
+  // const data = req.body.data.fields
   console.log(data, formId)
   ;(async () => {
-    const { rows } = await pool.query(`Select * from form where form_id=$1`, [
+    const client = await pool.connect()
+
+    try {
+      await client.query('BEGIN')
+    const { rows } = await client.query(`Select * from form where form_id=$1`, [
       formId,
     ])
     if (rows.length > 0) {
-      await pool.query(
+      await client.query(
         `INSERT INTO ${rows[0].form_name} (faculty_id) VALUES($1)`,
         [ID],
       )
       console.log('rows', rows[0])
 
       data.map((field) => {
-        pool.query(
+        client.query(
           `Update ${rows[0].form_name} set ${field.fieldName}=$1 WHERE faculty_id=$2`,
           [field.fieldData, ID],
         )
         // console.log(data.field_name.fieldName)
       })
     }
-  })().catch((err) =>
-    setImmediate(() => {
-      throw err
-    }),
-  )
-
-  // pool
-  // .query(`Select * from form where form_id=$1`,[formId])
-  // .then((result)=>{
-  //     if(result.rowCount>0){
-  //         console.log(result.rows[0].form_name)
-
-  //     }
-  // })
+  } catch (e) {
+    await client.query('ROLLBACK')
+    throw e
+  }
+  })().catch((e) =>{
+  console.error(e.stack)
+  res.send(e.stack)
+  })
 })
 
-// // res.send("hello worlds")
-// let formId = 19;
 
-// // const {data} = req.body
-// const data = {
-//     hello : "World",
-//     Ideas : ["Thanks", "&", "Regards"]
-// }
-
-// var fields = []
 
 module.exports = router
