@@ -43,28 +43,35 @@ router.post('/', (req, res) => {
 
 router.post('/add', (req, res) => {
   console.log('aaya')
-  //dummy data
-  // const data = {
-  //   annName: 'dev',
-  //   annData: 'data',
-  //   target: 1,
-  //   fields: [
-  //     {
-  //       fieldName: 'hello',
-  //       fieldType: false,
-  //     },
-  //     {
-  //       fieldName: 'Ideas',
-  //       fieldType: true,
-  //     },
-  //   ],
-  //   numberOfFields: 2,
-  //   deadline: '2021-08-12',
-  //   formName: 'ProjectfinalTest',
-  //   formData: 'This is the data',
-  // }
+  // dummy data
+  const data = {
+    annName: 'ThreadAnn3',
+    annData: 'HELLO',
+    target: 1,
+    fields: [
+      {
+        fieldName: 'HiThread',
+        fieldType: false,
+      },
+      {
+        fieldName: 'ByeThread',
+        fieldType: true,
+      },
+    ],
+    numberOfFields: 2,
+    deadline: '2021-08-12',
+    formName: 'ThreadForm3',
+    formData: 'This is the data',
 
-  const { data } = req.body
+    isNewThread:false,
+    threadData : {
+      threadName: "Thread helo",
+      linkThreadID: 7
+    }
+
+  }
+  let resThreadID
+  // const { data } = req.body
 
   const target = [data.target]
 
@@ -73,6 +80,26 @@ router.post('/add', (req, res) => {
 
     try {
       await client.query('BEGIN')
+
+      if(data.isNewThread){
+        const result = await client.query('SELECT * from threads where thread_name=$1',[data.threadData.threadName])
+        if(result.rows.length>0)
+        {                                                      
+            res.send({error:"Thread name already exists"})
+        }
+
+          resThreadID = await client.query('INSERT INTO threads(thread_name) values($1) RETURNING thread_id',[data.threadData.threadName])
+          console.log(resThreadID.rows[0].thread_id)
+          resThreadID=resThreadID.rows[0].thread_id
+    }
+    else
+    {
+      if(data.threadData.linkThreadID){
+        resThreadID=data.threadData.linkThreadID;
+      }
+      
+    }
+
 
       const result = await client.query(
         `SELECT * from announcements where announcement_name=$1`,
@@ -83,10 +110,18 @@ router.post('/add', (req, res) => {
         res.send({ err: 'Announcement with same name already exists' })
       } else {
         const resAnnId = await client.query(
-          'INSERT INTO announcements(announcement_name, announcement_data, target)  VALUES($1,$2,$3) RETURNING announcement_id',
-          [data.annName, data.annData, target],
+          'INSERT INTO announcements(announcement_name, announcement_data, target, thread_id)  VALUES($1,$2,$3,$4) RETURNING announcement_id',
+          [data.annName, data.annData, target, resThreadID],
         )
         console.log('announcement done')
+        await client.query(
+          `UPDATE threads
+          SET linked_announcements = array_append(linked_announcements, $1)
+          where thread_id=$2;
+          `,
+          [resAnnId.rows[0].announcement_id, resThreadID],
+        )
+        console.log('Thread updated successfully')
 
         // console.log("ye ann id")
         // console.log(resAnnId)
