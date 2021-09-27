@@ -14,7 +14,6 @@ exports.signin = (req, res) => {
       }
 
       if (req.body.password != response.rows[0].password) {
-        p
         return res.status(401).send({
           accessToken: null,
           message: 'Invalid Password!',

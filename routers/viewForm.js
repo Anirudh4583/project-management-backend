@@ -3,10 +3,10 @@ var router = express.Router()
 var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
-
+const { auth } = require('../middleware')
 const { pool } = require('../config/db.Config')
 
-router.post('/', (req, res) => {
+router.post('/',[auth.verifyToken], (req, res) => {
   const { formId } = req.body
 
   pool.query(
