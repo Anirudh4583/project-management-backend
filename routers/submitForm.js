@@ -16,18 +16,18 @@ router.post('/0', [auth.verifyToken, auth.isAdmin], (req, res) => {
 
 
 
-router.post('/1', [auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
+router.post('/1', [auth.verifyToken, auth.isAdmin], (req, res) => {
   // res.send("hello faculty")
   let ID = auth.getID(req)
   console.log(ID)
-  let formId = 59
-  const data = [
-      {fieldName: "single", fieldData: 
-      ["hi whats up"]}
-      ]
+  // let formId = 59
+  // const data = [
+  //     {fieldName: "single", fieldData: 
+  //     ["hi whats up"]}
+  //     ]
 
-  // const formId = req.body.formId
-  // const data = req.body.data.fields
+  const formId = req.body.formId
+  const data = req.body.data.fields
   console.log(data, formId)
   ;(async () => {
     const client = await pool.connect()
@@ -50,20 +50,21 @@ router.post('/1', [auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
           [field.fieldData, ID],
         )
 
-    
-
         // console.log(data.field_name.fieldName)
       })
       await client.query('COMMIT')
-      res.send({success:"Form submitted successfully"})
+      res.status(200).send({success:"Form submitted successfully"})
     }
   } catch (e) {
     await client.query('ROLLBACK')
     throw e
   }
+  finally{
+    client.release()
+  }
   })().catch((e) =>{
   console.error(e.stack)
-  res.send({error:"There was some error in submitting form, please try again"})
+  res.status(500).send({error:"There was some error in submitting form, please try again"})
   })
 })
 

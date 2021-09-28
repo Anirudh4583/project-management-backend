@@ -3,77 +3,107 @@ var router = express.Router()
 var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
+const { auth } = require('../middleware')
 
 const { pool } = require('../config/db.Config')
 
-router.post('/', (req, res) => {
+router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
   var role = req.body.role
-  console.log(role)
+  var ID = auth.getID(req)
+  // console.log(ID)
+  // console.log(role)
   if (role == 0) {
-    pool.query(`select * from announcements`, (err, result) => {
-      if (err) {
-        console.log(err)
-        res.send(err)
-      } else {
-        // console.log(result);
-        if (result.rows) {
-          // console.log(result.rows);
-          res.send(result.rows)
-        }
+    ;(async function() {
+      const client = await pool.connect()
+      const result = await client.query(`SELECT * from announcements`)
+      if(result.rowCount>0){
+          res.status(200).send(result.rows)
       }
+      else
+      {
+        res.status(404).send({message:`No announcement`})
+      }
+      
+      client.release()
+    })().catch((e) => {
+      console.error(e.stack)
     })
+    // pool.end()
   } else {
-    //console.log("aaya");
-    pool.query(
-      `SELECT * from announcements WHERE $1=ANY(target)`,
-      [role],
-      (err, result) => {
-        if (err) {
-          console.log(err)
-          res.send(err)
-        } else {
-          if (result.rows) {
-            res.send(result.rows)
-          }
-        }
-      },
-    )
-  }
+      var batch = req.batch
+     
+      var r = (role==2 ? batch : role)
+
+      console.log(r)
+
+
+      pool
+      .query(`SELECT * from announcements WHERE $1=ANY(target)`,[r])
+      .then((result) => {
+        if(result.rowCount>0){
+          res.status(200).send(result.rows)
+      }
+      else
+      {
+        // res.status(404).send({message:`No announcement for ${r} batch`})
+      }
+       
+      }).catch(err =>{
+      // res.status(500).send(err)
+      })
+
+     
+    }
+    // pool.end()
+  
 })
 
-router.post('/add', (req, res) => {
-  console.log('aaya')
+router.post('/add',[auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
+  
+  
   // dummy data
-  const data = {
-    annName: 'ThreadAnn3',
-    annData: 'HELLO',
-    target: 1,
-    fields: [
-      {
-        fieldName: 'HiThread',
-        fieldType: false,
-      },
-      {
-        fieldName: 'ByeThread',
-        fieldType: true,
-      },
-    ],
-    numberOfFields: 2,
-    deadline: '2021-08-12',
-    formName: 'ThreadForm3',
-    formData: 'This is the data',
 
-    isNewThread:false,
-    threadData : {
-      threadName: "Thread helo",
-      linkThreadID: 7
-    }
+  // const data = {
+  //   annName: 'HI',
+  //   annData: 'HELLO',
+  //   annTarget : {
+  //     batch: [2018,2019],
+  //     isFaculty: true
+  //   },
+  //   fields: [
+  //     {
+  //       fieldName: 'HiThread',
+  //       fieldType: false,
+  //     },
+  //     {
+  //       fieldName: 'ByeThread',
+  //       fieldType: true,
+  //     },
+  //   ],
+  //   numberOfFields: 2,
+  //   deadline: '2021-08-12',
+  //   formName: 'Hello',
+  //   formData: 'This is the data',
 
-  }
+  //   isNewThread:false,
+  //   threadData : {
+  //     threadName: "Thread",
+  //     linkThreadID: 8
+  //   }
+  // }
+
+  const data = req.body
+
   let resThreadID
-  // const { data } = req.body
+  let target=[]
 
-  const target = [data.target]
+
+  if(data.annTarget.batch){
+    target = data.annTarget.batch
+  }
+  data.annTarget.isFaculty && target.push(1)
+
+  
 
   ;(async () => {
     const client = await pool.connect()
@@ -85,7 +115,7 @@ router.post('/add', (req, res) => {
         const result = await client.query('SELECT * from threads where thread_name=$1',[data.threadData.threadName])
         if(result.rows.length>0)
         {                                                      
-            res.send({error:"Thread name already exists"})
+            res.status(400).send({error:"Thread name already exists"})
         }
 
           resThreadID = await client.query('INSERT INTO threads(thread_name) values($1) RETURNING thread_id',[data.threadData.threadName])
@@ -107,7 +137,7 @@ router.post('/add', (req, res) => {
       )
 
       if (result.rows.length > 0) {
-        res.send({ err: 'Announcement with same name already exists' })
+        res.status(400).send({ err: 'Announcement with same name already exists' })
       } else {
         const resAnnId = await client.query(
           'INSERT INTO announcements(announcement_name, announcement_data, target, thread_id)  VALUES($1,$2,$3,$4) RETURNING announcement_id',
@@ -133,7 +163,7 @@ router.post('/add', (req, res) => {
           )
 
           if (result.rows.length > 0) {
-            res.send({ error: 'Form with same name already exists!' })
+            res.status(400).send({ error: 'Form with same name already exists!'})
           } else {
             const resFormId = await client.query(
               `INSERT INTO form (form_name,form_data,form_deadline,form_fields) VALUES($1,$2,$3,$4) RETURNING form_id`,
@@ -179,9 +209,12 @@ router.post('/add', (req, res) => {
       await client.query('ROLLBACK')
       throw e
     }
+    finally{
+      client.release()
+    }
   })().catch((e) => {
     console.error(e.stack)
-    res.send(e.stack)
+    res.status(500).send(e.stack)
   })
 })
 

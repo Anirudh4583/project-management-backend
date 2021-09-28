@@ -4,8 +4,8 @@ const { pool } = require('../config/db.config')
 
 verifyToken = (req, res, next) => {
   let token = req.headers['accesstoken']
-  console.log(req.headers)
-  console.log(token)
+  // console.log(req.headers)
+  // console.log(token)
 
   if (!token) {
     return res.status(403).send({
@@ -111,11 +111,35 @@ getId = (req) => {
   return req.userId
 }
 
+getBatch = (req,res,next) => {
+  pool
+  .query(`SELECT student_batch from students where user_id=$1`, [req.userId])
+  .then((response) => {
+    if (response.rowCount > 0) {
+      const batch = response.rows[0].student_batch
+      // console.log(batch)
+      req.batch = batch
+     next()
+    }
+   else{
+    next()
+   }
+   
+  })
+  .catch((err) =>
+    setImmediate(() => {
+      throw err
+    }),
+  )
+}
+
+
 const auth = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isModerator: isFaculty,
   isModeratorOrAdmin: isFacultyOrAdmin,
   getID: getId,
+  getBatch: getBatch
 }
 module.exports = auth

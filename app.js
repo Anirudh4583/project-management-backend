@@ -4,7 +4,7 @@ const app = express()
 
 const cors = require('cors')
 const corsOptions = {
-  origin: 'http://localhost:8080',
+  origin: 'http://localhost:3000',
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 }
@@ -18,10 +18,10 @@ var Submitform = require('./routers/submitForm')
 var Thread = require('./routers/thread')
 
 app.use('/', Login)
-app.use('/api/announcement', Announcement)
-app.use('/api/viewForm', Viewform)
+app.use('/api/announcement/', Announcement)
+app.use('/api/viewForm/', Viewform)
 app.use('/api/mail/', Mail)
-app.use("/api/submitForm", Submitform)
+app.use("/api/submitForm/", Submitform)
 app.use("/api/thread/",Thread)
 
 module.exports = app
