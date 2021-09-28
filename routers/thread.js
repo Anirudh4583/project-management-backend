@@ -8,21 +8,38 @@ const {pool} = require("../config/db.Config")
 
 
 
-router.get('/',[auth.verifyToken, auth.isAdmin], (req, res) => {
+router.get('/', (req, res) => {
     
-    ;(async function() {
-        const client = await pool.connect()
-        const result = await client.query('SELECT * from threads')
+    // ;(async function() {
+    //     const client = await pool.connect()
+    //     const result = await client.query('SELECT * from threads')
+    //     if(result.rowCount>0){
+    //         res.status(200).send({data:result.rows})
+    //     }
+    //    res.status(404).send({err:"No threads available"})
+    //     client.release()
+    //   })().catch((e) => {
+    //     console.error(e.stack)
+    //     res.status(500).send(e.stack)
+    //   })
+
+      pool
+      .query('SELECT * from threads')
+      .then((result) => {
         if(result.rowCount>0){
             res.status(200).send({data:result.rows})
         }
-       res.status(404).send({err:"No threads available"})
-        client.release()
-      })()
+        else{
+            res.status(404).send({err:"No threads available"})
+        }
+       
+      }).catch(err =>{
+      res.status(500).send(err)
+      })
 
-})
+    })
 
-router.post('/linkedAnnouncements',[auth.verifyToken, auth.isAdmin], (req, res) => {
+router.post('/linkedAnnouncements', (req, res) => {
     
      const data = req.body.threadID
     
@@ -38,11 +55,9 @@ router.post('/linkedAnnouncements',[auth.verifyToken, auth.isAdmin], (req, res) 
             res.status(404).send({message:"No such thread exists"})
         }   
     }).catch(err =>
-    setImmediate(() => {
-        throw err
-    })
+    res.status(500).send(err)
     )        
-    pool.end()
+    
 })
 
 

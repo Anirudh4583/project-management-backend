@@ -7,10 +7,10 @@ const { auth } = require('../middleware')
 
 const { pool } = require('../config/db.Config')
 
-router.post('/',[auth.verifyToken], (req, res) => {
+router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
   var role = req.body.role
-  var ID = auth.getID()
-  // var ID = req.body.ID
+  var ID = auth.getID(req)
+  // console.log(ID)
   // console.log(role)
   if (role == 0) {
     ;(async function() {
@@ -21,47 +21,37 @@ router.post('/',[auth.verifyToken], (req, res) => {
       }
       else
       {
-        res.status(404).send({message:`No announcement for ${r} batch`})
+        res.status(404).send({message:`No announcement`})
       }
       
       client.release()
-    })()
+    })().catch((e) => {
+      console.error(e.stack)
+    })
     // pool.end()
   } else {
-    
-      
-    //console.log("aaya");
-    let batch
+      var batch = req.batch
+     
+      var r = (role==2 ? batch : role)
 
-      if(role==2){
-        ;(async function() {
-          const client = await pool.connect()
-          const result = await client.query(`SELECT student_batch from students where user_id=$1`,[ID])
-          if(result.rowCount>0){
-            batch = result.rows[0].student_batch
-          }
-       
-          client.release()
-        })()
-      
-        // pool.end()
-      }
-      
-      let r = role==2 ? batch : role;
-      
-      ;(async function() {
-        const client = await pool.connect()
-        const result = await client.query(`SELECT * from announcements WHERE $1=ANY(target)`)
+      console.log(r)
+
+
+      pool
+      .query(`SELECT * from announcements WHERE $1=ANY(target)`,[r])
+      .then((result) => {
         if(result.rowCount>0){
-            res.status(200).send(result.rows)
-        }
-        else
-        {
-          res.status(404).send({message:`No announcement for ${r} batch`})
-        }
-        
-        client.release()
-      })()
+          res.status(200).send(result.rows)
+      }
+      else
+      {
+        // res.status(404).send({message:`No announcement for ${r} batch`})
+      }
+       
+      }).catch(err =>{
+      // res.status(500).send(err)
+      })
+
      
     }
     // pool.end()
