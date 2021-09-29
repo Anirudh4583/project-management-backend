@@ -112,12 +112,16 @@ getId = (req) => {
 }
 
 getBatch = (req,res,next) => {
-  pool
+
+  pool.query(`Select role from users where id=$1`, [req.userId]).then((result)=>{
+    // console.log(result.rows[0].role[0])
+    if(result.rows[0].role[0] == 2){
+      pool
   .query(`SELECT student_batch from students where user_id=$1`, [req.userId])
   .then((response) => {
     if (response.rowCount > 0) {
       const batch = response.rows[0].student_batch
-      // console.log(batch)
+      console.log(batch)
       req.batch = batch
      next()
     }
@@ -126,11 +130,17 @@ getBatch = (req,res,next) => {
    }
    
   })
-  .catch((err) =>
-    setImmediate(() => {
-      throw err
-    }),
-  )
+    }
+    else{
+      next()
+    }
+  }).catch((err) =>
+  setImmediate(() => {
+    throw err
+  }),
+)
+  
+  
 }
 
 

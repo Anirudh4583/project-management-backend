@@ -34,7 +34,7 @@ router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
      
       var r = (role==2 ? batch : role)
 
-      console.log(r)
+      // console.log(r)
 
 
       pool
@@ -45,7 +45,7 @@ router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
       }
       else
       {
-        // res.status(404).send({message:`No announcement for ${r} batch`})
+        res.status(404).send({message:`No announcements`})
       }
        
       }).catch(err =>{
@@ -58,37 +58,38 @@ router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
   
 })
 
-router.post('/add',[auth.verifyToken, auth.isModeratorOrAdmin], (req, res) => {
+router.post('/add', (req, res) => {
   
   
   // dummy data
 
   // const data = {
-  //   annName: 'HI',
+  //   annName: 'FillForm',
   //   annData: 'HELLO',
   //   annTarget : {
-  //     batch: [2018,2019],
-  //     isFaculty: true
+  //     // batch: [2018,2019],
+  //     isFaculty: false,
+  //     isStudent: false
   //   },
-  //   fields: [
-  //     {
-  //       fieldName: 'HiThread',
-  //       fieldType: false,
-  //     },
-  //     {
-  //       fieldName: 'ByeThread',
-  //       fieldType: true,
-  //     },
-  //   ],
-  //   numberOfFields: 2,
+  //   // fields: [
+  //   //   {
+  //   //     fieldName: 'HiThread',
+  //   //     fieldType: false,
+  //   //   },
+  //   //   {
+  //   //     fieldName: 'ByeThread',
+  //   //     fieldType: true,
+  //   //   },
+  //   // ],
+  //   // numberOfFields: 2,
   //   deadline: '2021-08-12',
-  //   formName: 'Hello',
-  //   formData: 'This is the data',
+  //   // formName: 'Hello2',
+  //   // formData: 'This is the data',
 
   //   isNewThread:false,
   //   threadData : {
-  //     threadName: "Thread",
-  //     linkThreadID: 8
+  //     threadName: "BTP",
+  //     linkThreadID: "14"
   //   }
   // }
 
