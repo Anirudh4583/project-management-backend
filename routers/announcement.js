@@ -21,7 +21,7 @@ router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
       }
       else
       {
-        res.status(404).send({message:`No announcement`})
+        res.status(404).send({message:`No announcement for user `})
       }
       
       client.release()
