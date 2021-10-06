@@ -111,10 +111,11 @@ getId = (req) => {
   return req.userId
 }
 
-getBatch = (req,res,next) => {
+getRoleAndBatch = (req,res,next) => {
 
   pool.query(`Select role from users where id=$1`, [req.userId]).then((result)=>{
     // console.log(result.rows[0].role[0])
+    req.role = result.rows[0].role[0]
     if(result.rows[0].role[0] == 2){
       pool
   .query(`SELECT student_batch from students where user_id=$1`, [req.userId])
@@ -150,6 +151,6 @@ const auth = {
   isModerator: isFaculty,
   isModeratorOrAdmin: isFacultyOrAdmin,
   getID: getId,
-  getBatch: getBatch
+  getRoleAndBatch: getRoleAndBatch
 }
 module.exports = auth
