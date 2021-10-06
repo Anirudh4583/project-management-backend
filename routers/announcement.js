@@ -22,7 +22,7 @@ router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
       }
       else
       {
-        res.status(404).send({message:`No announcement`})
+        res.status(404).send({message:`No announcement for user `})
       }
       
       client.release()
