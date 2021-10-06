@@ -30,7 +30,7 @@ router.get('/', (req, res) => {
             res.status(200).send({data:result.rows})
         }
         else{
-            res.status(404).send({err:"No threads available"})
+            res.status(404).send({error:"No threads available"})
         }
        
       }).catch(err =>{
@@ -52,7 +52,7 @@ router.post('/linkedAnnouncements', (req, res) => {
         }
         else 
         {
-            res.status(404).send({message:"No such thread exists"})
+            res.status(404).send({error:"No such thread exists"})
         }   
     }).catch(err =>
     res.status(500).send(err)
