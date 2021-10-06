@@ -7,9 +7,10 @@ const { auth } = require('../middleware')
 
 const { pool } = require('../config/db.Config')
 
-router.post('/', [auth.verifyToken, auth.getBatch], (req, res) => {
-  var role = req.body.role
-  var ID = auth.getID(req)
+router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
+  console.log(req.role)
+  var role = req.role
+  // var ID = auth.getID(req)
   // console.log(ID)
   // console.log(role)
   if (role == 0) {
