@@ -8,43 +8,14 @@ const {pool} = require("../config/db.Config")
 
 
 
-router.get('/', (req, res) => {
+router.get('/', [auth.verifyToken, auth.getRoleAndBatch],(req, res) => {
     
-    // ;(async function() {
-    //     const client = await pool.connect()
-    //     const result = await client.query('SELECT * from threads')
-    //     if(result.rowCount>0){
-    //         res.status(200).send({data:result.rows})
-    //     }
-    //    res.status(404).send({err:"No threads available"})
-    //     client.release()
-    //   })().catch((e) => {
-    //     console.error(e.stack)
-    //     res.status(500).send(e.stack)
-    //   })
-
-      pool
-      .query('SELECT * from threads')
-      .then((result) => {
-        if(result.rowCount>0){
-            res.status(200).send({data:result.rows})
-        }
-        else{
-            res.status(404).send({err:"No threads available"})
-        }
-       
-      }).catch(err =>{
-      res.status(500).send(err)
-      })
-
-    })
-
-router.post('/linkedAnnouncements', (req, res) => {
-    
-     const data = req.body.threadID
-    
+    var role = req.role
+    var batch = req.batch
+    var r = (role==2 ? batch : role)
+    const query = r==0 ? "select * from threads Inner join announcements on (threads.thread_id = announcements.thread_id) " : "select * from threads Inner join announcements on (threads.thread_id = announcements.thread_id and "+r+" =ANY(announcements.target))"
     pool
-    .query('SELECT announcement_name, announcement_id from announcements where thread_id=$1',[data])
+    .query(query)
     .then((result) => {
         if(result.rowCount>0)
         {
@@ -54,10 +25,11 @@ router.post('/linkedAnnouncements', (req, res) => {
         {
             res.status(404).send({message:"No such thread exists"})
         }   
-    }).catch(err =>
-    res.status(500).send(err)
-    )        
-    
+    }).catch(err =>{
+        console.log(err);
+        res.status(500).send(err)
+    }
+    )       
 })
 
 

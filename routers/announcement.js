@@ -9,7 +9,6 @@ const { pool } = require('../config/db.Config')
 
 router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
   console.log(req.role)
-  var role = req.role
   // var ID = auth.getID(req)
   // console.log(ID)
   // console.log(role)
