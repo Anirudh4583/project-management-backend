@@ -10,13 +10,13 @@ exports.signin = (req, res) => {
     .then((response) => {
       if (!response.rows.length) {
         console.log(response)
-        return res.status(404).send({ message: 'User not found.' })
+        return res.status(404).send({ error: 'User not found.' })
       }
 
       if (req.body.password != response.rows[0].password) {
         return res.status(401).send({
           accessToken: null,
-          message: 'Invalid Password!',
+          error: 'Invalid Password!',
         })
       }
 
@@ -33,6 +33,6 @@ exports.signin = (req, res) => {
       })
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message })
+      res.status(500).send({ error: err.message })
     })
 }

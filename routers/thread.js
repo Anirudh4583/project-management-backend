@@ -9,7 +9,6 @@ const {pool} = require("../config/db.Config")
 
 
 router.get('/', [auth.verifyToken, auth.getRoleAndBatch],(req, res) => {
-    
     var role = req.role
     var batch = req.batch
     var r = (role==2 ? batch : role)
@@ -23,7 +22,7 @@ router.get('/', [auth.verifyToken, auth.getRoleAndBatch],(req, res) => {
         }
         else 
         {
-            res.status(404).send({message:"No such thread exists"})
+            res.status(404).send({error:"No such thread exists"})
         }   
     }).catch(err =>{
         console.log(err);

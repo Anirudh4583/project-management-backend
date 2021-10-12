@@ -21,7 +21,7 @@ router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
       }
       else
       {
-        res.status(404).send({message:`No announcement for user `})
+        res.status(404).send({error:`No announcement for user `})
       }
       
       client.release()
@@ -45,7 +45,7 @@ router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
       }
       else
       {
-        res.status(404).send({message:`No announcements`})
+        res.status(404).send({error:`No announcements`})
       }
        
       }).catch(err =>{
@@ -138,7 +138,7 @@ router.post('/add', (req, res) => {
       )
 
       if (result.rows.length > 0) {
-        res.status(400).send({ err: 'Announcement with same name already exists' })
+        res.status(400).send({ error: 'Announcement with same name already exists' })
       } else {
         const resAnnId = await client.query(
           'INSERT INTO announcements(announcement_name, announcement_data, target, thread_id)  VALUES($1,$2,$3,$4) RETURNING announcement_id',
@@ -204,7 +204,7 @@ router.post('/add', (req, res) => {
         }
 
         await client.query('COMMIT')
-        res.send({ message: 'Announcement added successfully' })
+        res.status(200).send({ success: 'Announcement added successfully' })
       }
     } catch (e) {
       await client.query('ROLLBACK')
