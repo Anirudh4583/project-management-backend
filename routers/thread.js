@@ -7,7 +7,25 @@ const { auth } = require('../middleware')
 const {pool} = require("../config/db.Config")
 
 
-
+router.get('/all', [auth.verifyToken, auth.isAdmin],(req, res) => {
+    const query = "select * from threads"
+    pool
+    .query(query)
+    .then((result) => {
+        if(result.rowCount>0)
+        {
+            res.status(200).send(result.rows)
+        }
+        else 
+        {
+            res.status(404).send({error:"No thread exists"})
+        }   
+    }).catch(err =>{
+        console.log(err);
+        res.status(500).send(err)
+    }
+    )       
+})
 router.get('/', [auth.verifyToken, auth.getRoleAndBatch],(req, res) => {
     var role = req.role
     var batch = req.batch

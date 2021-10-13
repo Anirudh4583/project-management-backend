@@ -28,15 +28,10 @@ router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
     })().catch((e) => {
       console.error(e.stack)
     })
-    // pool.end()
   } else {
       var batch = req.batch
      
       var r = (role==2 ? batch : role)
-
-      // console.log(r)
-
-
       pool
       .query(`SELECT * from announcements WHERE $1=ANY(target)`,[r])
       .then((result) => {
