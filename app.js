@@ -17,6 +17,10 @@ var Mail = require('./routers/mail')
 var Submitform = require('./routers/submitForm')
 var Thread = require('./routers/thread')
 
+app.get('/hello', (_, res)=>{
+  res.send("hello world")
+})
+
 app.use('/', Login)
 app.use('/api/announcement/', Announcement)
 app.use('/api/viewForm/', Viewform)
