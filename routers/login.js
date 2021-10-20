@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
     }
     console.log(results.rows)
   })
+  res.send('login')
 })
 
 router.post('/login', controller.signin)
