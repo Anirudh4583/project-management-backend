@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const config = require('../config/auth.config.js')
-const { pool } = require('../config/db.config')
+const { pool } = require('../config/db')
 
 verifyToken = (req, res, next) => {
   let token = req.headers['accesstoken']
@@ -111,39 +111,37 @@ getId = (req) => {
   return req.userId
 }
 
-getRoleAndBatch = (req,res,next) => {
-
-  pool.query(`Select role from users where id=$1`, [req.userId]).then((result)=>{
-    // console.log(result.rows[0].role[0])
-    req.role = result.rows[0].role[0]
-    if(result.rows[0].role[0] == 2){
-      pool
-  .query(`SELECT student_batch from students where user_id=$1`, [req.userId])
-  .then((response) => {
-    if (response.rowCount > 0) {
-      const batch = response.rows[0].student_batch
-      console.log(batch)
-      req.batch = batch
-     next()
-    }
-   else{
-    next()
-   }
-   
-  })
-    }
-    else{
-      next()
-    }
-  }).catch((err) =>
-  setImmediate(() => {
-    throw err
-  }),
-)
-  
-  
+getRoleAndBatch = (req, res, next) => {
+  pool
+    .query(`Select role from users where id=$1`, [req.userId])
+    .then((result) => {
+      // console.log(result.rows[0].role[0])
+      req.role = result.rows[0].role[0]
+      if (result.rows[0].role[0] == 2) {
+        pool
+          .query(`SELECT student_batch from students where user_id=$1`, [
+            req.userId,
+          ])
+          .then((response) => {
+            if (response.rowCount > 0) {
+              const batch = response.rows[0].student_batch
+              console.log(batch)
+              req.batch = batch
+              next()
+            } else {
+              next()
+            }
+          })
+      } else {
+        next()
+      }
+    })
+    .catch((err) =>
+      setImmediate(() => {
+        throw err
+      }),
+    )
 }
-
 
 const auth = {
   verifyToken: verifyToken,
@@ -151,6 +149,6 @@ const auth = {
   isModerator: isFaculty,
   isModeratorOrAdmin: isFacultyOrAdmin,
   getID: getId,
-  getRoleAndBatch: getRoleAndBatch
+  getRoleAndBatch: getRoleAndBatch,
 }
 module.exports = auth

@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken')
 
 const config = require('../config/auth.config')
-const { pool } = require('../config/db.config')
+const { pool } = require('../config/db')
 
 exports.signin = (req, res) => {
   console.log(req.body.email)

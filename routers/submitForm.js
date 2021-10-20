@@ -5,16 +5,13 @@ router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 const { auth } = require('../middleware')
 
-const { pool } = require('../config/db.Config')
+const { pool } = require('../config/db')
 
 router.post('/0', [auth.verifyToken, auth.isAdmin], (req, res) => {
   // let ID = auth.getID(req)
-
   // res.send('HI' + ID)
   // console.log(req)
 })
-
-
 
 router.post('/1', [auth.verifyToken, auth.isAdmin], (req, res) => {
   // res.send("hello faculty")
@@ -22,7 +19,7 @@ router.post('/1', [auth.verifyToken, auth.isAdmin], (req, res) => {
   console.log(ID)
   // let formId = 59
   // const data = [
-  //     {fieldName: "single", fieldData: 
+  //     {fieldName: "single", fieldData:
   //     ["hi whats up"]}
   //     ]
 
@@ -34,40 +31,42 @@ router.post('/1', [auth.verifyToken, auth.isAdmin], (req, res) => {
 
     try {
       await client.query('BEGIN')
-    const { rows } = await client.query(`Select * from form where form_id=$1`, [
-      formId,
-    ])
-    if (rows.length > 0) {
-      await client.query(
-        `INSERT INTO ${rows[0].form_name} (faculty_id) VALUES($1)`,
-        [ID],
+      const { rows } = await client.query(
+        `Select * from form where form_id=$1`,
+        [formId],
       )
-      console.log('rows', rows[0])
-
-      data.map((field) => {
-        client.query(
-          `Update ${rows[0].form_name} set ${field.fieldName}=$1 WHERE faculty_id=$2`,
-          [field.fieldData, ID],
+      if (rows.length > 0) {
+        await client.query(
+          `INSERT INTO ${rows[0].form_name} (faculty_id) VALUES($1)`,
+          [ID],
         )
+        console.log('rows', rows[0])
 
-        // console.log(data.field_name.fieldName)
-      })
-      await client.query('COMMIT')
-      res.status(200).send({success:"Form submitted successfully"})
+        data.map((field) => {
+          client.query(
+            `Update ${rows[0].form_name} set ${field.fieldName}=$1 WHERE faculty_id=$2`,
+            [field.fieldData, ID],
+          )
+
+          // console.log(data.field_name.fieldName)
+        })
+        await client.query('COMMIT')
+        res.status(200).send({ success: 'Form submitted successfully' })
+      }
+    } catch (e) {
+      await client.query('ROLLBACK')
+      throw e
+    } finally {
+      client.release()
     }
-  } catch (e) {
-    await client.query('ROLLBACK')
-    throw e
-  }
-  finally{
-    client.release()
-  }
-  })().catch((e) =>{
-  console.error(e.stack)
-  res.status(500).send({error:"There was some error in submitting form, please try again"})
+  })().catch((e) => {
+    console.error(e.stack)
+    res
+      .status(500)
+      .send({
+        error: 'There was some error in submitting form, please try again',
+      })
   })
 })
-
-
 
 module.exports = router

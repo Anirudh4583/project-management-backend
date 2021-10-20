@@ -4,7 +4,7 @@ var bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 const controller = require('../controllers/auth.controller')
-const { pool } = require('../config/db.config')
+const { pool } = require('../config/db')
 
 router.get('/', (req, res) => {
   pool.query(`SELECT * FROM users`, (err, results) => {

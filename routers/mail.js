@@ -6,7 +6,7 @@ router.use(bodyParser.json())
 const { auth } = require('../middleware')
 var { transporter } = require('../helpers/utils/nodemailer')
 
-router.post('/',[auth.verifyToken, auth.isAdmin], (req, res) => {
+router.post('/', [auth.verifyToken, auth.isAdmin], (req, res) => {
   // const {data}=req.body;
 
   // USE THIS FORMAT FOR DATA
