@@ -3,12 +3,14 @@ const express = require('express')
 const app = express()
 
 const cors = require('cors')
-const corsOptions = {
-  origin: 'https://design-project.netlify.app/',
-  credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
-}
-app.use(cors(corsOptions))
+
+// const corsOptions = {
+//   origin: 'https://design-project.netlify.app/',
+//   credentials: true, //access-control-allow-credentials:true
+//   optionSuccessStatus: 200,
+// }
+
+app.use(cors())
 
 var Login = require('./routers/login')
 var Announcement = require('./routers/announcement')
