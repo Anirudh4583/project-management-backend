@@ -13,7 +13,9 @@ router.post('/0', [auth.verifyToken, auth.isAdmin], (req, res) => {
   // console.log(req)
 })
 
-router.post('/1', [auth.verifyToken, auth.isAdmin], (req, res) => {
+router.post('/1', [auth.verifyToken, 
+//                    auth.isAdmin
+                  ], (req, res) => {
   // res.send("hello faculty")
   let ID = auth.getID(req)
   console.log(ID)
