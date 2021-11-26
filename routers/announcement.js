@@ -50,28 +50,29 @@ router.post('/add', (req, res) => {
   // dummy data
 
   // const data = {
-  //   annName: 'FillForm',
+  //   annName: 'ProjectNoIdea',
   //   annData: 'HELLO',
   //   annTarget : {
-  //     // batch: [2018,2019],
+  //     batch: [2018,2019],
   //     isFaculty: false,
-  //     isStudent: false
+  //     isStudent: true,
   //   },
-  //   // fields: [
-  //   //   {
-  //   //     fieldName: 'HiThread',
-  //   //     fieldType: false,
-  //   //   },
-  //   //   {
-  //   //     fieldName: 'ByeThread',
-  //   //     fieldType: true,
-  //   //   },
-  //   // ],
-  //   // numberOfFields: 2,
+  //   viewTable: '1',
+  //   fields: [
+  //     {
+  //       fieldName: 'HiThread',
+  //       fieldType: false,
+  //     },
+  //     {
+  //       fieldName: 'ByeThread',
+  //       fieldType: true,
+  //     },
+  //   ],
+  //   numberOfFields: 2,
   //   deadline: '2021-08-12',
-  //   // formName: 'Hello2',
-  //   // formData: 'This is the data',
-
+  //   formName: 'ProjectSelected',
+  //   formData: 'This is the data',
+  //   isProjectIdea: true,
   //   isNewThread:false,
   //   threadData : {
   //     threadName: "BTP",
@@ -186,6 +187,16 @@ router.post('/add', (req, res) => {
                                               `)
                 }
               })
+              if(data.isProjectIdea){
+                client.query(`
+                              ALTER TABLE ${data.formName} 
+                              ADD COLUMN accepted VARCHAR;
+                              `)
+                client.query(`
+                ALTER TABLE ${data.formName} 
+                ADD COLUMN applied VARCHAR[];
+                `)                            
+              }
             }
           }
         }

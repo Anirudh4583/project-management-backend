@@ -18,7 +18,8 @@ var Viewform = require('./routers/viewForm')
 var Mail = require('./routers/mail')
 var Submitform = require('./routers/submitForm')
 var Thread = require('./routers/thread')
-
+var GetForm = require('./routers/getFormList')
+var table = require('./routers/table')
 app.get('/hello', (_, res) => {
   res.send('hello world')
 })
@@ -26,8 +27,9 @@ app.get('/hello', (_, res) => {
 app.use('/', Login)
 app.use('/api/announcement/', Announcement)
 app.use('/api/viewForm/', Viewform)
+app.use('/api/allForm/', GetForm)
 app.use('/api/mail/', Mail)
 app.use('/api/submitForm/', Submitform)
 app.use('/api/thread/', Thread)
-
+app.use('/api/getTable', table)
 module.exports = app
