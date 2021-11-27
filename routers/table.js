@@ -19,7 +19,7 @@ router.post('/', (req, res) => {
         req.body.formId,
       ])
 
-      const formName = rows[0].formName.toLowerCase()
+      const formName = rows[0].form_name.toLowerCase()
       queryString = 'Select * from ' + formName
 
       pool.query(queryString, (err, result) => {
