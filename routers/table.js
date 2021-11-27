@@ -9,10 +9,10 @@ const { pool } = require('../config/db')
 const { query } = require('express')
 //function to change string to lowercase
 router.post('/', (req, res) => {
-    const data = {
-        formName : 'ProjectSelected'
-    }
-    formName = data.formName.toLowerCase()
+//     const data = {
+//         formName : 'ProjectSelected'
+//     }
+    const formName = req.body.formName.toLowerCase()
     queryString = 'Select * from ' + formName 
     pool.query(queryString, (err, result) => {
         if (err) {
