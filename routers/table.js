@@ -15,13 +15,13 @@ router.post('/', (req, res) => {
 
   ;(async () => {
     try {
-      const { rows } = await client.query(
-        `Select * from form where form_id=$1`,
-        [req.body.formId],
-      )
+      const { rows } = await pool.query(`Select * from form where form_id=$1`, [
+        req.body.formId,
+      ])
 
       const formName = rows[0].formName.toLowerCase()
       queryString = 'Select * from ' + formName
+
       pool.query(queryString, (err, result) => {
         if (err) {
           console.log(err.stack)
