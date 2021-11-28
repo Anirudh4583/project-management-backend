@@ -30,7 +30,7 @@ router.get('/applicants/:id', [auth.verifyToken, auth.isModerator], (req, res) =
 
         res.status(200).send({applicants:applicants, data:result.rows[0]})
         } else {
-          res.status(404).send({ error: `No announcement for user ` })
+          res.status(200).send({ message: `No announcement for user ` })
         }
   
         client.release()
@@ -188,7 +188,7 @@ router.post('/reject', [auth.verifyToken, auth.isModerator], (req, res) => {
           res.status(200).send({message:`user with email: ${email} is rejected`});
         
         } else {
-        res.status(404).send({ error: `error while accepting the user` })
+        res.status(401).send({ error: `error while accepting the user` })
         }
       }
       catch (e) {
