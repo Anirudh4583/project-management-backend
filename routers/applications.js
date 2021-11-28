@@ -185,7 +185,7 @@ router.post('/reject', [auth.verifyToken, auth.isModerator], (req, res) => {
             return e!==d;
         })
           
-        console.log(available)
+        
         await client.query(`update ${formname} set applied=$1 where faculty_id=$2;`,[applied, facultyId]);
           
           await client.query('COMMIT')
