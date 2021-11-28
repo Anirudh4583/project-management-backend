@@ -26,7 +26,7 @@ router.post('/1', [auth.verifyToken,
   //     ]
 
   const formId = req.body.formId
-  const data = req.body.data
+  const data = req.body.data.fields
   console.log(data, formId)
   ;(async () => {
     const client = await pool.connect()
