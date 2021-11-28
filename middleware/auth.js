@@ -113,20 +113,24 @@ getId = (req) => {
 
 getRoleAndBatch = (req, res, next) => {
   pool
-    .query(`Select role from users where id=$1`, [req.userId])
+    .query(`Select * from users where id=$1`, [req.userId])
     .then((result) => {
-      // console.log(result.rows[0].role[0])
+      console.log(result.rows[0])
       req.role = result.rows[0].role[0]
+      const email = result.rows[0].email
       if (result.rows[0].role[0] == 2) {
         pool
-          .query(`SELECT student_batch from students where user_id=$1`, [
+          .query(`SELECT * from students where user_id=$1`, [
             req.userId,
           ])
           .then((response) => {
             if (response.rowCount > 0) {
               const batch = response.rows[0].student_batch
+              
               console.log(batch)
+              console.log(email)
               req.batch = batch
+              req.email = email
               next()
             } else {
               next()

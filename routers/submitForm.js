@@ -49,9 +49,27 @@ router.post('/1', [auth.verifyToken,
             `Update ${rows[0].form_name} set ${field.fieldName}=$1 WHERE faculty_id=$2`,
             [field.fieldData, ID],
           )
-
           // console.log(data.field_name.fieldName)
         })
+
+        const result = await client.query(`Select * from ${rows[0].form_name}`)
+
+          if(result.rows[0]?.applied){
+
+          let available = []
+          let accepted = []
+
+          for(var i=0;i<data?.length;i++){
+            available.push(1);
+            accepted.push("null")
+          }
+
+            client.query(
+              `Update ${rows[0].form_name} set applied=$1, accepted=$2 WHERE faculty_id=$3`,
+              [available, accepted, ID],
+            )
+          }
+
         await client.query('COMMIT')
         res.status(200).send({ success: 'Form submitted successfully' })
       }
