@@ -9,6 +9,7 @@ const { pool } = require('../config/db')
 
 router.get('/', [auth.verifyToken, auth.getRoleAndBatch], (req, res) => {
   console.log(req.role)
+  var role = req.role
   // var ID = auth.getID(req)
   // console.log(ID)
   // console.log(role)
@@ -190,12 +191,16 @@ router.post('/add', (req, res) => {
               if(data.isProjectIdea){
                 client.query(`
                               ALTER TABLE ${data.formName} 
-                              ADD COLUMN accepted VARCHAR;
+                              ADD COLUMN available VARCHAR[];
                               `)
                 client.query(`
                 ALTER TABLE ${data.formName} 
                 ADD COLUMN applied VARCHAR[];
-                `)                            
+                `)   
+                client.query(`
+                ALTER TABLE ${data.formName} 
+                ADD COLUMN accepted VARCHAR[];
+                `)                           
               }
             }
           }

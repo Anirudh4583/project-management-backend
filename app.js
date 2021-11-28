@@ -20,6 +20,7 @@ var Submitform = require('./routers/submitForm')
 var Thread = require('./routers/thread')
 var GetForm = require('./routers/getFormList')
 var table = require('./routers/table')
+var application = require("./routers/applications")
 app.get('/hello', (_, res) => {
   res.send('hello world')
 })
@@ -32,4 +33,5 @@ app.use('/api/mail/', Mail)
 app.use('/api/submitForm/', Submitform)
 app.use('/api/thread/', Thread)
 app.use('/api/getTable', table)
+app.use('/api/user', application)
 module.exports = app
