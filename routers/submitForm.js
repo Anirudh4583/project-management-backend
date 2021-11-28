@@ -59,7 +59,10 @@ router.post('/1', [auth.verifyToken,
           let available = []
           let accepted = []
 
-          for(var i=0;i<data?.length;i++){
+          const index = data.findIndex(item => item.fieldName.toLowerCase() === 'idea');
+            console.log(index)
+            console.log("here is data",data[index].fieldData.length)
+          for(var i=0;i<data[index]?.fieldData?.length;i++){
             available.push(1);
             accepted.push("null")
           }
