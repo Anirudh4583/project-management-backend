@@ -19,7 +19,7 @@ router.get('/applicants/:id', [auth.verifyToken, auth.isModerator], (req, res) =
           const formname = rows[0].form_name.toLowerCase()
           
         const result = await client.query(`SELECT * from ${formname} where faculty_id=${req.userId}`);
-       
+        console.log(result.rows[0])
         if (result.rowCount > 0) {
         
         let applicants = result.rows[0].applied
@@ -120,11 +120,15 @@ if(email){
       available[idx] = '0';
   
       let accepted = result.rows[0]?.accepted;
-      accepted[idx] = email
+      accepted[idx] = `${idea}:${email}`
   
       let applied = result.rows[0]?.applied.filter((e)=>{
-          return e.split(":")[0]!==idea || e.split(":")[1]!==email;
+          return e.split(":")[0]!==idea 
       })
+
+      applied = result.rows[0]?.applied.filter((e)=>{
+        return e.split(":")[1]!==email;
+    }) 
         
       console.log(available)
       console.log(applied)
