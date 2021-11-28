@@ -24,7 +24,7 @@ router.get('/applicants/:id', [auth.verifyToken, auth.isModerator], (req, res) =
         
         let applicants = result.rows[0].applied
 
-        applicants = applicants.map((e)=>{
+        applicants = applicants?.map((e)=>{
             return ({idea:e.split(":")[0], email:e.split(":")[1]})
         })
 
