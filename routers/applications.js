@@ -171,7 +171,7 @@ router.post('/reject', [auth.verifyToken, auth.isModerator], (req, res) => {
     
         const result = await client.query(`select * from ${formname} where faculty_id=$1`,[facultyId]);
         if (result.rowCount > 0) {
-        var idx = result.rows[0].ideas.indexOf(idea)
+        var idx = result.rows[0].idea.indexOf(idea)
         console.log("here buddy", idx)
     
         
