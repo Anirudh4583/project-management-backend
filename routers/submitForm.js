@@ -53,8 +53,8 @@ router.post('/1', [auth.verifyToken,
         })
 
         const result = await client.query(`Select * from ${rows[0].form_name}`)
-
-          if(result.rows[0]?.applied){
+        console.log("hERE IS APPLIED", result.fields[result.fields.length-1].name)
+          if(result.fields[result.fields.length-1].name==="accepted"){
 
           let available = []
           let accepted = []
@@ -63,9 +63,10 @@ router.post('/1', [auth.verifyToken,
             available.push(1);
             accepted.push("null")
           }
-
+          console.log("here accepted",accepted)
+          console.log("here available", available)
             client.query(
-              `Update ${rows[0].form_name} set applied=$1, accepted=$2 WHERE faculty_id=$3`,
+              `Update ${rows[0].form_name} set available=$1, accepted=$2 WHERE faculty_id=$3`,
               [available, accepted, ID],
             )
           }
