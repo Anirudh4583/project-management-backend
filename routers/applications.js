@@ -94,7 +94,7 @@ router.post('/accept', [auth.verifyToken, auth.isModerator], (req, res) => {
 const {idea, email, formId} = req.body;
 const facultyId = req.userId 
 let d = ""
-if(id){
+if(email){
 
     d = `${idea}:${email}`
 
@@ -131,7 +131,7 @@ if(id){
       await client.query(`update ${formname} set available=$1, applied=$2, accepted=$3 where faculty_id=$4;`,[available, applied, accepted, facultyId]);
         
         await client.query('COMMIT')
-        res.status(200).send({message:`user with id: ${id} is accepted`});
+        res.status(200).send({message:`user with email: ${email} is accepted`});
       
     }
     }
@@ -152,7 +152,7 @@ router.post('/reject', [auth.verifyToken, auth.isModerator], (req, res) => {
   const {idea, email, formId} = req.body;
   const facultyId = req.userId 
   let d = ""
-  if(id){
+  if(email){
   
       d = `${idea}:${email}`
   
@@ -185,7 +185,7 @@ router.post('/reject', [auth.verifyToken, auth.isModerator], (req, res) => {
         await client.query(`update ${formname} set applied=$1 where faculty_id=$2;`,[applied, facultyId]);
           
           await client.query('COMMIT')
-          res.status(200).send({message:`user with id: ${id} is accepted`});
+          res.status(200).send({message:`user with email: ${email} is rejected`});
         
         } else {
         res.status(404).send({ error: `error while accepting the user` })
