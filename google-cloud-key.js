@@ -1,3 +1,5 @@
+const _ = require("lodash");
+const privateKey = _.replace(process.env.PRIVATE_KEY, /\\n/g, '\n');
 module.exports = {
   type: process.env.TYPE,
   project_id: process.env.PROJECT_ID,
