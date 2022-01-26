@@ -21,6 +21,7 @@ var Thread = require('./routers/thread')
 var GetForm = require('./routers/getFormList')
 var table = require('./routers/table')
 var application = require("./routers/applications")
+var file = require("./routers/file")
 app.get('/hello', (_, res) => {
   res.send('hello world')
 })
@@ -34,4 +35,5 @@ app.use('/api/submitForm/', Submitform)
 app.use('/api/thread/', Thread)
 app.use('/api/getTable', table)
 app.use('/api/user', application)
+app.use("/api/", file)
 module.exports = app
