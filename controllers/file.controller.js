@@ -2,6 +2,7 @@ const processFile = require("../middleware/upload");
 const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
 const credentials = require("../google-cloud-key")
+console.log(credentials)
 const storage = new Storage({ projectId: process.env.PROJECT_ID, credentials });
 const bucket = storage.bucket("project_management_iiitv");
 
