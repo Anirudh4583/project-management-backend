@@ -1,7 +1,8 @@
 const processFile = require("../middleware/upload");
 const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
-const storage = new Storage({ keyFilename: "google-cloud-key.json" });
+const credentials = require("../google-cloud-key")
+const storage = new Storage({ projectId: process.env.PROJECT_ID, credentials });
 const bucket = storage.bucket("project_management_iiitv");
 
 const upload = async (req, res) => {
